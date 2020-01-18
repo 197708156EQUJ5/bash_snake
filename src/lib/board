@@ -1,0 +1,78 @@
+#!/bin/bash
+## ----------------------------------------------
+## @file: board
+
+COLS=`tput cols`
+ROWS=`tput lines`
+
+## enum:
+##    direction 1 = NORTH
+##    direction 2 = EAST
+##    direction 3 = SOUTH
+##    direction 4 = WEST
+direction=0
+delay=1
+pos_y=$(($ROWS/2))
+pos_x=$(($COLS/2))
+prev_pos_x=0
+prev_pos_y=0
+head="@"
+tail_="*"
+
+function clear_screen() {
+    for i in $(seq 2 $ROWS)
+    do
+        set_position $i 0
+        erase_to_end
+    done
+}
+
+function init_screen() {
+    for i in $(seq 7 $COLS)
+    do
+        echo -n "-"
+    done
+    echo
+    for i in $(seq 3 $ROWS)
+    do
+        echo -n "|"
+        for i in $(seq 9 $COLS)
+        do
+            echo -n " "
+        done
+        echo "|"
+    done
+    for i in $(seq 7 $COLS)
+    do
+        echo -n "-"
+    done
+    direction=4
+}
+
+function change_direction() {
+    direction=$1
+}
+
+function refresh_board() {
+    (sleep $delay && kill -ALRM $$) &
+    debug "prev $prev_pos_y $prev_pos_x"
+    set_position $prev_pos_y $prev_pos_x
+    echo -ne " "
+    debug "curr $pos_y $pos_x"
+    set_position $pos_y $pos_x
+    echo -ne "$head"
+    prev_pos_x=$pos_x
+    prev_pos_y=$pos_y
+    if [ $direction = 4 ]; then
+        ((pos_x-=1))
+    elif [ $direction = 2 ]; then
+        ((pos_x+=1))
+    elif [ $direction = 1 ]; then
+        ((pos_y-=1))
+    elif [ $direction = 3 ]; then
+        ((pos_y+=1))
+    fi
+    cursor_home
+}
+
+## END board
