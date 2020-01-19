@@ -2,6 +2,11 @@
 ## ----------------------------------------------
 ## @File: utils
 
+##
+## @name set_color
+##
+## sets the color of the text. Only green is implemented
+##
 function set_color() {
     local color=$1
     local style=$2
@@ -15,6 +20,11 @@ function set_color() {
     fi
 }
 
+##
+## @name clear_screen()
+##
+## clear all the lines of the screen
+##
 function clear_screen() {
     for i in $(seq 2 $ROWS)
     do
@@ -23,6 +33,11 @@ function clear_screen() {
     done
 }
 
+##
+## @name update_score
+##
+## updates the scoreboard
+##
 function update_score() {
     set_position 0 0
     FORWARD $(($COLS/4))
@@ -43,6 +58,11 @@ function update_score() {
     set_color "GREEN" "BOLD"
 }
 
+##
+## @name init_screen()
+##
+## initialize the screen
+##
 function init_screen() {
     for i in $(seq 2 $ROWS)
     do
@@ -50,12 +70,22 @@ function init_screen() {
     done
 }
 
+##
+## @name debug()
+##
+## A logger to print debug statements
+##
 function debug() {
     local info=$1
     the_date=$(date +'%Y%m%d:%H%M%S')
     echo "[$the_date] $info" >> ~/temp/snake-debug
 }
 
+##
+## @name showDocs
+##
+## prints out these comments
+##
 function showDocs() {
   grep -Ir '^##' . | sed -e 's/^.*##//' 1>&2
 }
