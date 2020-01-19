@@ -30,6 +30,22 @@ function erase_to_end() {
     echo -en "\033[K"
 }
 
+function UP() {
+    echo -en "\033[${1}A"
+}
+
+function DOWN() {
+    echo -en "\033[${1}B"
+}
+
+function BACK() {
+    echo -en "\033[${1}D"
+}
+
+function FORWARD() {
+    echo -en "\033[${1}C"
+}
+
 ##
 ## @name
 ##

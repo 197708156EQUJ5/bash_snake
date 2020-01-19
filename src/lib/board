@@ -18,6 +18,7 @@ prev_pos_x=0
 prev_pos_y=0
 head="@"
 tail_="*"
+item="&"
 
 ##
 ## @name clear_screen()
@@ -58,6 +59,14 @@ function init_screen() {
         echo -n "-"
     done
     direction=4
+
+    for i in $(seq 1 5)
+    do
+        get_random_location y x
+        set_position $y $x
+        echo -ne "$item"
+    done
+    cursor_home
 }
 
 ##

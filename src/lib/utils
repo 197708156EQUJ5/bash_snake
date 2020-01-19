@@ -90,4 +90,22 @@ function showDocs() {
   grep -Ir '^##' . | sed -e 's/^.*##//' 1>&2
 }
 
+##
+## @name get_random_location()
+##
+## gets an y,x location randomly on the board
+##
+## @return random y,x
+##
+function get_random_location() {
+    local __return1=$1
+    local __return2=$2
+    local rand=$(( RANDOM % $(($ROWS-2)) ))
+    ((rand+1))
+    eval $__return1="'$rand'"
+    local rand=$(( RANDOM % $(($COLS-2)) ))
+    ((rand+1))
+    eval $__return2="'$rand'"
+}
+
 ## END utils
