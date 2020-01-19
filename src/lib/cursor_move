@@ -1,0 +1,65 @@
+#!/bin/bash
+## ----------------------------------------------
+## @File: cursor_move
+
+##
+## @name
+##
+##
+##
+function hide_cursor() {
+## @name
+    tput civis
+}
+
+##
+## @name
+##
+##
+##
+function show_cursor() {
+    tput cnorm
+}
+
+##
+## @name
+##
+##
+##
+function erase_to_end() {
+    echo -en "\033[K"
+}
+
+##
+## @name
+##
+##
+##
+function get_coord() {
+    local __return1=$1
+    local __return2=$2
+    local rand=$(( RANDOM % 30 ))
+    eval $__return1="'$rand'"
+    local rand=$(( RANDOM % 30 ))
+    eval $__return2="'$rand'"
+}
+
+##
+## @name
+##
+##
+##
+function set_position() {
+    echo -ne "\033[${1};${2}H"
+}
+
+##
+## @name
+##
+##
+##
+function cursor_home() {
+    set_position $ROWS 0
+}
+
+## END cursor_move
