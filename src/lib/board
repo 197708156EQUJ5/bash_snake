@@ -11,7 +11,7 @@ ROWS=`tput lines`
 ##    direction 3 = SOUTH
 ##    direction 4 = WEST
 direction=0
-delay=1
+delay=0.15
 pos_y=$(($ROWS/2))
 pos_x=$(($COLS/2))
 prev_pos_x=0
@@ -19,6 +19,11 @@ prev_pos_y=0
 head="@"
 tail_="*"
 
+##
+## @name clear_screen()
+## 
+## Clears the screen
+##
 function clear_screen() {
     for i in $(seq 2 $ROWS)
     do
@@ -27,6 +32,12 @@ function clear_screen() {
     done
 }
 
+##
+## @name init_screen() 
+## 
+## Initializes the screen to the size of 
+## rows and columns, with a border
+##
 function init_screen() {
     for i in $(seq 7 $COLS)
     do
@@ -49,10 +60,31 @@ function init_screen() {
     direction=4
 }
 
+##
+## @name change_direction()
+##
+## Changes the direction of the snake. The snake cannot
+## reserve direction
+##
 function change_direction() {
-    direction=$1
+    local new_direction=$1
+    if [[ $new_direction == 1 ]] && [[ $direction != 3 ]]; then
+        direction=$new_direction
+    elif [[ $new_direction == 2 ]] && [[ $direction != 4 ]]; then
+        direction=$new_direction
+    elif [[ $new_direction == 3 ]] && [[ $direction != 1 ]]; then
+        direction=$new_direction
+    elif [[ $new_direction == 4 ]] && [[ $direction != 2 ]]; then
+        direction=$new_direction
+    fi
 }
 
+##
+## @name refresh_board()
+##
+## refreshes the board on every tick moving the 
+## snake to the new location
+##
 function refresh_board() {
     (sleep $delay && kill -ALRM $$) &
     debug "prev $prev_pos_y $prev_pos_x"
@@ -73,6 +105,21 @@ function refresh_board() {
         ((pos_y+=1))
     fi
     cursor_home
+}
+
+##
+## @name goodbye()
+##
+## prints to the screen a goodbye message
+##
+function goodbye() {
+    clear_screen
+    UP $(($ROWS/2))
+    set_color "GREEN"
+    FORWARD $(($COLS/2-5))
+    echo "Goodbye"
+    DOWN $(($ROWS/2))
+    show_cursor
 }
 
 ## END board

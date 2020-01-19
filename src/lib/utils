@@ -56,4 +56,8 @@ function debug() {
     echo "[$the_date] $info" >> ~/temp/snake-debug
 }
 
+function showDocs() {
+  grep -Ir '^##' . | sed -e 's/^.*##//' 1>&2
+}
+
 ## END utils
