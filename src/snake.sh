@@ -1,29 +1,35 @@
 #!/bin/bash
-## ----------------------------------------------
+## ==============================================
 ## @file: snake.sh
 
 source lib/utils
 source lib/board
+source lib/constants
 source lib/cursor_move
 
-##
+base=`basename "$0"`
+
+## ----------------------------------------------
 ## @name main()
 ##
 ## runs the main execution of the snake game
 ##
+## ----------------------------------------------
 function main() {
+    create_logger
     clear
     hide_cursor
     clear_screen
     init_screen
     trap refresh_board ALRM
+    trap quit INT
     refresh_board
     while :
     do
         read -s -n 1 key
         
         if [[ $key = q ]]; then
-            goodbye
+            quit
             break
         elif [[ $key = a ]]; then
             change_direction 4
@@ -35,8 +41,6 @@ function main() {
             change_direction 1
         fi
     done
-    show_cursor
-    echo "END"
 }
 
 if [[ "$1" = "list_func" ]]; then
@@ -47,3 +51,4 @@ fi
 main
 
 ## END snake.sh
+## ==============================================

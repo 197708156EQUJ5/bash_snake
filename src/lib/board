@@ -1,30 +1,18 @@
 #!/bin/bash
-## ----------------------------------------------
+## ==============================================
 ## @file: board
+base=`basename "$0"`
 
-COLS=`tput cols`
-ROWS=`tput lines`
+items=()
+prev_positions=()
+body_count=1
 
-## enum:
-##    direction 1 = NORTH
-##    direction 2 = EAST
-##    direction 3 = SOUTH
-##    direction 4 = WEST
-direction=0
-delay=0.15
-pos_y=$(($ROWS/2))
-pos_x=$(($COLS/2))
-prev_pos_x=0
-prev_pos_y=0
-head="@"
-tail_="*"
-item="&"
-
-##
+## ----------------------------------------------
 ## @name clear_screen()
 ## 
 ## Clears the screen
 ##
+## ----------------------------------------------
 function clear_screen() {
     for i in $(seq 2 $ROWS)
     do
@@ -33,12 +21,13 @@ function clear_screen() {
     done
 }
 
-##
+## ----------------------------------------------
 ## @name init_screen() 
 ## 
 ## Initializes the screen to the size of 
 ## rows and columns, with a border
 ##
+## ----------------------------------------------
 function init_screen() {
     for i in $(seq 7 $COLS)
     do
@@ -64,17 +53,52 @@ function init_screen() {
     do
         get_random_location y x
         set_position $y $x
+        LOG "item: $y $x" $base "INFO"
+        items+=("$y,$x")
         echo -ne "$item"
+        #echo -ne "$y,$x"
     done
     cursor_home
+    IFS=","
 }
 
+## ----------------------------------------------
+## @name is_eaten()
 ##
+## Determines if an item was eaten
+##
+## @param flag to be returned if true
+## @param x the x coordinate of the snake
+## @param y the y coordinate of the snake
+## @return true if the item and the snake occupy the same space
+##
+## ----------------------------------------------
+function is_eaten() {
+    local __return=$1
+    local y=$2
+    local x=$3
+    local flag='0'
+    #LOG "$y $x" $base "DEBUG"
+    for k in "${items[@]}"; do
+        read -ra coord <<< "$k"
+        y_coord="${coord[@]:0:1}"
+        x_coord="${coord[@]:1:2}"
+        if [[ "$x" -eq "$x_coord" ]] && [[ "$y" -eq "$y_coord" ]]; then
+            LOG eaten $base INFO
+            flag=1
+            ((body_count+=2))
+        fi
+    done
+    eval $__return="'$flag'"
+}
+
+## ----------------------------------------------
 ## @name change_direction()
 ##
 ## Changes the direction of the snake. The snake cannot
 ## reserve direction
 ##
+## ----------------------------------------------
 function change_direction() {
     local new_direction=$1
     if [[ $new_direction == 1 ]] && [[ $direction != 3 ]]; then
@@ -88,18 +112,21 @@ function change_direction() {
     fi
 }
 
-##
+## ----------------------------------------------
 ## @name refresh_board()
 ##
 ## refreshes the board on every tick moving the 
 ## snake to the new location
 ##
+## ----------------------------------------------
 function refresh_board() {
     (sleep $delay && kill -ALRM $$) &
-    debug "prev $prev_pos_y $prev_pos_x"
+    #LOG "prev $prev_pos_y $prev_pos_x" $base "DEBUG"
+    #prev_positions+=("$prev_pos_y $prev_pos_x")
     set_position $prev_pos_y $prev_pos_x
     echo -ne " "
-    debug "curr $pos_y $pos_x"
+    #LOG "curr $pos_y $pos_x" $base "DEBUG"
+    is_eaten flag $pos_y $pos_x
     set_position $pos_y $pos_x
     echo -ne "$head"
     prev_pos_x=$pos_x
@@ -116,12 +143,13 @@ function refresh_board() {
     cursor_home
 }
 
+## ----------------------------------------------
+## @name quit()
 ##
-## @name goodbye()
+## prints to the screen a goodbye message, show cursor, deletes log file
 ##
-## prints to the screen a goodbye message
-##
-function goodbye() {
+## ----------------------------------------------
+function quit() {
     clear_screen
     UP $(($ROWS/2))
     set_color "GREEN"
@@ -129,6 +157,10 @@ function goodbye() {
     echo "Goodbye"
     DOWN $(($ROWS/2))
     show_cursor
+    clear_logger
+    stty echo
+    exit 0
 }
 
 ## END board
+## ==============================================

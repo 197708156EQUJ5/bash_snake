@@ -1,12 +1,15 @@
 #!/bin/bash
-## ----------------------------------------------
+## ==============================================
 ## @File: utils
+base=`basename "$0"`
 
 ##
+## ----------------------------------------------
 ## @name set_color
 ##
 ## sets the color of the text. Only green is implemented
 ##
+## ----------------------------------------------
 function set_color() {
     local color=$1
     local style=$2
@@ -21,10 +24,12 @@ function set_color() {
 }
 
 ##
+## ----------------------------------------------
 ## @name clear_screen()
 ##
 ## clear all the lines of the screen
 ##
+## ----------------------------------------------
 function clear_screen() {
     for i in $(seq 2 $ROWS)
     do
@@ -34,10 +39,12 @@ function clear_screen() {
 }
 
 ##
+## ----------------------------------------------
 ## @name update_score
 ##
 ## updates the scoreboard
 ##
+## ----------------------------------------------
 function update_score() {
     set_position 0 0
     FORWARD $(($COLS/4))
@@ -59,10 +66,12 @@ function update_score() {
 }
 
 ##
+## ----------------------------------------------
 ## @name init_screen()
 ##
 ## initialize the screen
 ##
+## ----------------------------------------------
 function init_screen() {
     for i in $(seq 2 $ROWS)
     do
@@ -71,32 +80,72 @@ function init_screen() {
 }
 
 ##
-## @name debug()
+## ----------------------------------------------
+## @name LOG()
 ##
-## A logger to print debug statements
+## A logger to print log statements
 ##
-function debug() {
-    local info=$1
-    the_date=$(date +'%Y%m%d:%H%M%S')
-    echo "[$the_date] $info" >> ~/temp/snake-debug
+## @param log the log statement to print
+## @param filename the calling filename
+## @param level the level of the log statement (DEBUG, INFO, WARN, ERROR)
+##
+## ----------------------------------------------
+function LOG() {
+    local log=$1
+    local filename=$2
+    local level=$3
+    log_str="\033[1;30m$(date +'%Y%m%d %T')\033[0;35m [$filename]"
+    if [ "$level" = DEBUG ]; then
+        log_str="${log_str}\033[1;34m $level"
+    elif [ "$level" = INFO ]; then
+        log_str="${log_str}\033[1;32m $level"
+    elif [ "$level" = WARN ]; then
+        log_str="${log_str}\033[1;33m $level"
+    elif [ "$level" = ERROR ]; then
+        log_str="${log_str}\033[1;31m $level"
+    fi
+    log_str="${log_str}\033[0m $log"
+    echo -e $log_str >> $log_file
 }
 
+## ----------------------------------------------
+## @name create_logger()
 ##
+## creates the log file
+##
+## ----------------------------------------------
+function create_logger() {
+    touch ${log_file}
+}
+
+## ----------------------------------------------
+## @name clear_logger()
+##
+## removes the log file
+##
+## ----------------------------------------------
+function clear_logger() {
+    rm $log_file
+}
+
+## ----------------------------------------------
 ## @name showDocs
 ##
 ## prints out these comments
 ##
+## ----------------------------------------------
 function showDocs() {
   grep -Ir '^##' . | sed -e 's/^.*##//' 1>&2
 }
 
-##
+## ----------------------------------------------
 ## @name get_random_location()
 ##
 ## gets an y,x location randomly on the board
 ##
 ## @return random y,x
 ##
+## ----------------------------------------------
 function get_random_location() {
     local __return1=$1
     local __return2=$2
