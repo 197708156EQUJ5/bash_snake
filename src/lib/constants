@@ -1,0 +1,29 @@
+#!/bin/bash
+## ==============================================
+## @file: contants
+base=`basename "$0"`
+
+COLS=`tput cols`
+ROWS=`tput lines`
+
+## enum:
+##    direction 1 = NORTH
+##    direction 2 = EAST
+##    direction 3 = SOUTH
+##    direction 4 = WEST
+direction=0
+delay=0.15
+pos_y=$(($ROWS/2))
+pos_x=$(($COLS/2))
+prev_pos_x=0
+prev_pos_y=0
+head="@"
+tail_="*"
+item="&"
+
+log_file="$HOME/temp/snake.log"
+
+#IFS=","
+
+## END board
+## ==============================================
